@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './db';
-import { TestModel, SessionModel } from './models';
+import { connectDB } from './db.js';
+import { TestModel, SessionModel } from './models.js';
 
 dotenv.config();
 
@@ -74,7 +74,7 @@ app.get('/api/sessions/stats', async (req, res) => {
     const sessions = await SessionModel.find().sort({ dateTaken: 1 });
     
     // Format sessions for line chart progression
-    const progression = sessions.map(s => ({
+    const progression = sessions.map((s: any) => ({
       id: s._id,
       testTitle: s.testTitle,
       score: s.totalScore,
@@ -86,8 +86,8 @@ app.get('/api/sessions/stats', async (req, res) => {
     // Calculate section averages
     const sectionStats: Record<string, { totalAccuracy: number; count: number; totalScore: number }> = {};
     
-    sessions.forEach(s => {
-      s.sectionBreakdown.forEach(sec => {
+    sessions.forEach((s: any) => {
+      s.sectionBreakdown.forEach((sec: any) => {
         const name = sec.sectionName;
         const accuracy = sec.attempted > 0 ? (sec.correct / sec.attempted) * 100 : 0;
         
