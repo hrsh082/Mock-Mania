@@ -1,0 +1,78 @@
+{
+  "testTitle": "IBPS PO Mock Challenge - Mini Test 1",
+  "markingScheme": {
+    "correct": 1.0,
+    "wrong": -0.25,
+    "unattempted": 0.0
+  },
+  "sections": [
+    {
+      "sectionName": "English Language",
+      "timeLimitMinutes": 1.5,
+      "questions": [
+        {
+          "id": "eng-1",
+          "questionText": "According to the passage, what is the main driver behind the rapid expansion of renewable energy sources globally?",
+          "passage": "In the decade leading up to 2026, the global energy landscape witnessed a profound transformation. Driven by falling technology costs, supportive regulatory frameworks, and increasing public awareness of environmental issues, solar and wind power installations reached record highs. However, integrating these intermittent sources into legacy grids remains a persistent engineering hurdle. Researchers are increasingly turning to advanced battery storage systems and smart grid artificial intelligence to balance demand and supply dynamically.",
+          "options": [
+            { "label": "A", "text": "The implementation of legacy grid infrastructure" },
+            { "label": "B", "text": "Decreasing costs of technology, public awareness, and regulatory support" },
+            { "label": "C", "text": "Direct government mandates banning all fossil fuels" },
+            { "label": "D", "text": "Rapid development of new gas turbine generators" },
+            { "label": "E", "text": "AI-driven algorithms replacing solar panels entirely" }
+          ],
+          "correctAnswer": "B",
+          "explanation": "The passage explicitly states that 'falling technology costs, supportive regulatory frameworks, and increasing public awareness' are driving the expansion."
+        },
+        {
+          "id": "eng-2",
+          "questionText": "What does the passage identify as a remaining obstacle to fully utilizing solar and wind energy?",
+          "passage": "In the decade leading up to 2026, the global energy landscape witnessed a profound transformation. Driven by falling technology costs, supportive regulatory frameworks, and increasing public awareness of environmental issues, solar and wind power installations reached record highs. However, integrating these intermittent sources into legacy grids remains a persistent engineering hurdle. Researchers are increasingly turning to advanced battery storage systems and smart grid artificial intelligence to balance demand and supply dynamically.",
+          "options": [
+            { "label": "A", "text": "An absolute shortage of public interest" },
+            { "label": "B", "text": "Extremely high operational maintenance costs of wind turbines" },
+            { "label": "C", "text": "The difficulty of integrating intermittent sources into legacy power grids" },
+            { "label": "D", "text": "The scarcity of lithium required for batteries" },
+            { "label": "E", "text": "Global decline in electricity demand" }
+          ],
+          "correctAnswer": "C",
+          "explanation": "The passage states: 'However, integrating these intermittent sources into legacy grids remains a persistent engineering hurdle.'"
+        }
+      ]
+    },
+    {
+      "sectionName": "Quantitative Aptitude",
+      "timeLimitMinutes": 1.5,
+      "questions": [
+        {
+          "id": "quant-1",
+          "questionText": "A tank is normally filled by a pipe in 6 hours. Due to a leak at the bottom, it takes 8 hours to fill the tank. If the tank is completely full, in how many hours will the leak empty the full tank?",
+          "passage": null,
+          "options": [
+            { "label": "A", "text": "14 hours" },
+            { "label": "B", "text": "24 hours" },
+            { "label": "C", "text": "18 hours" },
+            { "label": "D", "text": "12 hours" },
+            { "label": "E", "text": "20 hours" }
+          ],
+          "correctAnswer": "B",
+          "explanation": "Rate of pipe = 1/6 tank/hr. Combined rate of pipe and leak = 1/8 tank/hr. Leak rate = 1/6 - 1/8 = (4-3)/24 = 1/24 tank/hr. Thus, the leak will empty the tank in 24 hours."
+        },
+        {
+          "id": "quant-2",
+          "questionText": "Three partners X, Y, and Z start a business by investing Rs. 20,000, Rs. 28,000, and Rs. 36,000 respectively. If the total profit earned at the end of the year is Rs. 10,500, what is Z's share of the profit?",
+          "passage": null,
+          "options": [
+            { "label": "A", "text": "Rs. 3,500" },
+            { "label": "B", "text": "Rs. 2,500" },
+            { "label": "C", "text": "Rs. 4,500" },
+            { "label": "D", "text": "Rs. 5,000" },
+            { "label": "E", "text": "Rs. 3,000" }
+          ],
+          "correctAnswer": "C",
+          "explanation": "Ratio of investment = 20:28:36 = 5:7:9. Sum of ratio parts = 5 + 7 + 9 = 21. Z's share = (9 / 21) * 10500 = 9 * 500 = Rs. 4,500."
+        }
+      ]
+    }
+  ]
+}
