@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
   TrendingUp, BarChart2, Award,
   UploadCloud, BookOpen, LineChart as LineChartIcon,
-  Target, Zap, Activity
+  Target, Zap, Activity,
+  CheckCircle2,
+  MinusIcon,
+  XCircle,
+  Clock
 } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
@@ -320,7 +324,7 @@ export const DashboardModule: React.FC = () => {
                     ? <CheckCircle2 size={16} style={{ color: '#059669' }} />
                     : mid
                     ? <MinusIcon size={16} style={{ color: '#d97706' }} />
-                    : <XCircle size={16} style={{ color: '#dc2626' }} />
+                    : <XCircle size={16} style={{ color: '#dc2626' }} />  
                   }
                 </div>
 
