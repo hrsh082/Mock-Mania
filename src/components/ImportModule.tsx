@@ -10,7 +10,7 @@ export const ImportModule: React.FC = () => {
   const [dragging,   setDragging]   = useState(false);
   const [pasted,     setPasted]     = useState('');
   const [preview,    setPreview]    = useState<Test | null>(null);
-  const [rawJson,    setRawJson]    = useState('');
+  const [_rawJson,   setRawJson]    = useState('');
   const [errors,     setErrors]     = useState<string[]>([]);
   const [testType,   setTestType]   = useState<TestType>('FULL');
   const [saving,     setSaving]     = useState(false);

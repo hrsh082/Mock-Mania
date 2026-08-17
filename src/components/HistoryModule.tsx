@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   History, ChevronDown, ChevronUp, BarChart2,
-  CheckCircle2, XCircle, Minus, FileText,
-  Calendar, Target, TrendingUp, Clock, Award
+  FileText, Calendar, Target, Award
 } from 'lucide-react';
 import { fetchSessionsHistory } from '../utils/api';
 
@@ -186,7 +185,7 @@ export const HistoryModule: React.FC = () => {
                           { label: 'Wrong',    val: totalWrong,   color: '#dc2626', bg: '#fee2e2' },
                           { label: 'Skipped',  val: totalSkip,    color: '#6b7280', bg: '#f3f4f6' },
                           { label: 'Accuracy', val: `${acc}%`,    color: ok ? '#059669' : mid ? '#d97706' : '#dc2626', bg: ok ? '#d1fae5' : mid ? '#fef3c7' : '#fee2e2' },
-                        ].map(({ label, val, color, bg }) => (
+                        ].map(({ label, val, color }) => (
                           <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                             <div style={{ fontSize: 18, fontWeight: 600, color }}>{val}</div>
                             <div style={{ fontSize: 10, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</div>

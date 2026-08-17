@@ -1,5 +1,5 @@
 import { calculateResults } from './scoring';
-import { Test, UserResponse } from '../types';
+import type { Test, UserResponse } from '../types';
 
 // Define a sample test
 const sampleTest: Test = {

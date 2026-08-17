@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  TrendingUp, BarChart2, Award, Clock,
+  TrendingUp, BarChart2, Award,
   UploadCloud, BookOpen, LineChart as LineChartIcon,
-  Target, Zap, CheckCircle2, XCircle, ArrowUpRight,
-  ArrowDownRight, Minus as MinusIcon, Activity
+  Target, Zap, Activity
 } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
