@@ -1,6 +1,6 @@
 import type { Test } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:5000/api';
 
 export async function fetchTests(type?: string): Promise<Test[]> {
   const url = type ? `${API_BASE_URL}/tests?type=${type}` : `${API_BASE_URL}/tests`;
