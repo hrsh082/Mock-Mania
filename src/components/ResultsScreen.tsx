@@ -373,8 +373,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
               const ok   = sel === q.correctAnswer;
               const skip = sel == null;
               const isEx = expanded[q.id];
-              const isMk = statusMap.get(q.id) === 'MARKED_FOR_REVIEW' || statusMap.get(q.id) === 'MARKED_AND_ANSWERED';
-
+              
               // Status strip color
               const strip = skip ? '#d1d5db' : ok ? '#10b981' : '#ef4444';
 
