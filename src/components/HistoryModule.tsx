@@ -95,7 +95,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
           {/* Search */}
           <div className="search-wrapper" style={{ flex: 1, minWidth: 200 }}>
             <Search className="search-icon" size={13} />
-            <input className="input input-sm" style={{ paddingLeft: 30 }} placeholder="Search by test name…" value={search} onChange={e => setSearch(e.target.value)} />
+            <input className="input input-sm" style={{ paddingLeft: 30 }} placeholder="Search by test name" value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           {/* Date filter */}
           <div style={{ display: 'flex', background: 'rgba(118,118,128,0.10)', borderRadius: 9, padding: 3, gap: 2 }}>
@@ -139,7 +139,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
       )}
 
       {loading ? (
-        <div className="empty-state">Loading history…</div>
+        <div className="empty-state">Loading historyï¿½</div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
           <History size={24} />
@@ -204,7 +204,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                   </div>
                 </div>
 
-                {/* Expanded breakdown — animated slide */}
+                {/* Expanded breakdown ï¿½ animated slide */}
                 {s.sectionBreakdown && (() => {
                   const tc = s.sectionBreakdown.reduce((a: number, sec: any) => a + (sec.correct ?? 0), 0);
                   const tw = s.sectionBreakdown.reduce((a: number, sec: any) => a + (sec.wrong   ?? 0), 0);
@@ -305,7 +305,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                       <div style={{ height: 6, background: 'rgba(0,122,255,0.15)', borderRadius: 99, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${acc1}%`, background: 'var(--apple-blue)', borderRadius: 99 }} />
                       </div>
-                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc1}% · {sec.correct}/{sec.attempted} correct</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc1}% ï¿½ {sec.correct}/{sec.attempted} correct</div>
                     </div>
                     <div style={{ textAlign: 'center', fontSize: 10, color: 'var(--text-tertiary)', fontWeight: 700 }}>
                       {acc1 > acc2 ? '??' : acc2 > acc1 ? '??' : '='}
@@ -314,7 +314,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                       <div style={{ height: 6, background: 'rgba(88,86,214,0.15)', borderRadius: 99, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${acc2}%`, background: 'var(--apple-purple)', borderRadius: 99 }} />
                       </div>
-                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc2}% · {sec2.correct}/{sec2.attempted} correct</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc2}% ï¿½ {sec2.correct}/{sec2.attempted} correct</div>
                     </div>
                   </div>
                 </div>
