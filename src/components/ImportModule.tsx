@@ -1,3 +1,4 @@
+import { AppleSelect } from './AppleSelect';
 import React, { useState, useRef } from 'react';
 import { Upload, CheckCircle2, AlertTriangle, Database, FileJson, ClipboardList } from 'lucide-react';
 import { SlidingTabs } from './SlidingTabs';
@@ -76,12 +77,17 @@ export const ImportModule: React.FC = () => {
               value={mode}
               onChange={v => { setMode(v as 'FILE' | 'PASTE'); reset(); }}
             />
-            <select className="select" style={{ width: 'auto', flex: 1, maxWidth: 220 }} value={testType} onChange={e => setTestType(e.target.value as TestType)}>
-              <option value="FULL">Full Test</option>
-              <option value="ENGLISH">English Section</option>
-              <option value="QUANT">Quantitative Section</option>
-              <option value="REASONING">Reasoning Section</option>
-            </select>
+            <AppleSelect
+              value={testType}
+              onChange={v => setTestType(v as TestType)}
+              style={{ flex: 1, maxWidth: 220 }}
+              options={[
+                { value: 'FULL',      label: 'Full Test' },
+                { value: 'ENGLISH',   label: 'English Section' },
+                { value: 'QUANT',     label: 'Quantitative Section' },
+                { value: 'REASONING', label: 'Reasoning Section' },
+              ]}
+            />
           </div>
 
           {mode === 'FILE' ? (

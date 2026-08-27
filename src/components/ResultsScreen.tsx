@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Award, CheckCircle2, XCircle, HelpCircle, BarChart2,
+  Award, CheckCircle2, XCircle, HelpCircle, BarChart2, Bookmark,
   RefreshCw, TrendingUp, ChevronDown, ChevronUp,
   ArrowLeft, Minus, BookOpen, Target, Zap, Hash
 } from 'lucide-react';
@@ -19,7 +19,7 @@ interface Props {
   onUploadNew: () => void;
 }
 
-type Filter = 'ALL' | 'CORRECT' | 'WRONG' | 'SKIPPED';
+type Filter = 'ALL' | 'CORRECT' | 'WRONG' | 'SKIPPED' | 'MARKED';
 
 export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUploadNew }) => {
   const result: GrandResult = calculateResults(test, responses);
@@ -52,7 +52,8 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
     run();
   }, []);
 
-  const respMap = new Map(responses.map(r => [r.questionId, r.selectedAnswer]));
+  const respMap   = new Map(responses.map(r => [r.questionId, r.selectedAnswer]));
+  const statusMap = new Map(responses.map(r => [r.questionId, r.status]));
 
   const allQs: Array<{ q: any; section: string }> = [];
   test.sections.forEach(s => {
@@ -63,9 +64,11 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
 
   const filtered = allQs.filter(({ q }) => {
     const sel = respMap.get(q.id);
+    const st  = statusMap.get(q.id);
     if (filter === 'CORRECT') return sel === q.correctAnswer;
     if (filter === 'WRONG')   return sel != null && sel !== q.correctAnswer;
     if (filter === 'SKIPPED') return sel == null;
+    if (filter === 'MARKED')  return st === 'MARKED_FOR_REVIEW' || st === 'MARKED_AND_ANSWERED';
     return true;
   });
 
@@ -89,13 +92,15 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
     { key: 'CORRECT', label: 'Correct', icon: CheckCircle2, color: 'var(--green-600)' },
     { key: 'WRONG',   label: 'Wrong',   icon: XCircle,      color: 'var(--red-500)'   },
     { key: 'SKIPPED', label: 'Skipped', icon: Minus,        color: 'var(--gray-400)'  },
+    { key: 'MARKED',  label: 'Marked',  icon: Bookmark,    color: 'var(--apple-purple)' },
   ];
 
   const countFor = (f: Filter) => {
     if (f === 'ALL')     return allQs.length;
     if (f === 'CORRECT') return result.totalCorrect;
     if (f === 'WRONG')   return result.totalWrong;
-    return result.totalUnattempted;
+    if (f === 'SKIPPED') return result.totalUnattempted;
+    return responses.filter(r => r.status === 'MARKED_FOR_REVIEW' || r.status === 'MARKED_AND_ANSWERED').length;
   };
 
   return (
@@ -368,6 +373,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
               const ok   = sel === q.correctAnswer;
               const skip = sel == null;
               const isEx = expanded[q.id];
+              const isMk = statusMap.get(q.id) === 'MARKED_FOR_REVIEW' || statusMap.get(q.id) === 'MARKED_AND_ANSWERED';
 
               // Status strip color
               const strip = skip ? '#d1d5db' : ok ? '#10b981' : '#ef4444';

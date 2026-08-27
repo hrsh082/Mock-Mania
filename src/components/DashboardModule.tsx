@@ -12,9 +12,10 @@ import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine
 } from 'recharts';
-import { fetchPerformanceStats } from '../utils/api';
+import { fetchPerformanceStats, fetchSessionsHistory } from '../utils/api';
 
 export const DashboardModule: React.FC = () => {
+  const [rawSessions, setRawSessions] = useState<any[]>([]);
   const [stats, setStats] = useState<{
     progression: any[];
     sectionsBreakdown: any[];
@@ -27,11 +28,12 @@ export const DashboardModule: React.FC = () => {
       .then(setStats)
       .catch(console.error)
       .finally(() => setLoading(false));
+    fetchSessionsHistory().then(setRawSessions).catch(() => {});
   }, []);
 
   const prog     = stats?.progression ?? [];
   const sections = stats?.sectionsBreakdown ?? [];
-  const recent   = stats?.rawSessions?.slice(0, 5) ?? [];
+  const recent   = rawSessions.slice(-5).reverse();
 
   const totalTests  = prog.length;
   const avgScore    = totalTests ? Math.round(prog.reduce((a: number, i: any) => a + i.score, 0) / totalTests * 10) / 10 : 0;
@@ -65,7 +67,7 @@ export const DashboardModule: React.FC = () => {
   };
 
   const STEPS = [
-    { Icon: UploadCloud,    label: 'Import a test',     sub: 'Upload your JSON test file',   color: '#4F46E5', bg: '#EEF2FF' },
+    { Icon: UploadCloud,    label: 'Import a test',     sub: 'Upload your JSON test file',   color: 'var(--apple-blue)', bg: '#EEF2FF' },
     { Icon: BookOpen,       label: 'Pick from library', sub: 'Browse saved mock tests',      color: '#7c3aed', bg: '#ede9fe' },
     { Icon: LineChartIcon,  label: 'Track results',     sub: 'See score & accuracy history', color: '#0891b2', bg: '#e0f2fe' },
   ];
@@ -88,15 +90,15 @@ export const DashboardModule: React.FC = () => {
       <div className="page fade-in">
         {/* Welcome hero */}
         <div style={{
-          background: 'var(--sidebar-bg)', borderRadius: 20, padding: '36px 40px',
+          background: 'rgba(255,255,255,0.88)', borderRadius: 20, backdropFilter: 'blur(12px)', padding: '36px 40px',
           marginBottom: 24, position: 'relative', overflow: 'hidden',
         }}>
           <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(79,70,229,0.15)', pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', bottom: -60, left: 200, width: 200, height: 200, borderRadius: '50%', background: 'rgba(129,140,248,0.08)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 99, background: 'rgba(79,70,229,0.2)', border: '1px solid rgba(79,70,229,0.3)', marginBottom: 14 }}>
-              <Zap size={12} style={{ color: '#818CF8' }} />
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#818CF8', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Get Started</span>
+              <Zap size={12} style={{ color: 'var(--apple-blue)' }} />
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--apple-blue)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Get Started</span>
             </div>
             <div style={{ fontSize: 28, fontWeight: 600, color: 'white', letterSpacing: '-0.03em', marginBottom: 8, lineHeight: 1.2 }}>
               {greeting}, Harsh! 👋
@@ -132,27 +134,27 @@ export const DashboardModule: React.FC = () => {
 
       {/* ── Greeting banner ── */}
       <div style={{
-        background: 'var(--sidebar-bg)', borderRadius: 20, padding: '24px 30px',
+        background: 'rgba(255,255,255,0.88)', borderRadius: 20, backdropFilter: 'blur(12px)', padding: '24px 30px',
         marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{ position: 'absolute', top: -50, right: 120, width: 180, height: 180, borderRadius: '50%', background: 'rgba(79,70,229,0.12)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -40, right: -30, width: 140, height: 140, borderRadius: '50%', background: 'rgba(129,140,248,0.08)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative' }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
             {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
-          <div style={{ fontSize: 20, fontWeight: 600, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+          <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
             {greeting}, Harsh! 👋
           </div>
-          <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>
-            You've attempted <strong style={{ color: '#818CF8' }}>{totalTests}</strong> tests with an average accuracy of <strong style={{ color: '#4ade80' }}>{avgAccuracy}%</strong>
+          <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', marginTop: 4 }}>
+            You've attempted <strong style={{ color: 'var(--apple-blue)' }}>{totalTests}</strong> tests with an average accuracy of <strong style={{ color: 'var(--green-500)' }}>{avgAccuracy}%</strong>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative', flexShrink: 0 }}>
-          <div style={{ textAlign: 'center', padding: '10px 18px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12 }}>
-            <div style={{ fontSize: 24, fontWeight: 600, color: 'white', letterSpacing: '-0.03em', lineHeight: 1 }}>{best}</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 4 }}>Personal Best</div>
+          <div style={{ textAlign: 'center', padding: '10px 18px', background: 'rgba(0,122,255,0.08)', border: '1px solid rgba(0,122,255,0.15)', borderRadius: 12 }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--apple-blue)', letterSpacing: '-0.03em', lineHeight: 1 }}>{best}</div>
+            <div style={{ fontSize: 10, color: 'var(--apple-blue)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 4 }}>Personal Best</div>
           </div>
         </div>
       </div>
@@ -165,7 +167,7 @@ export const DashboardModule: React.FC = () => {
             value: totalTests,
             sub: 'Total attempts',
             icon: Activity,
-            valueColor: '#4F46E5',
+            valuecolor: 'var(--apple-blue)',
             extra: null,
           },
           {
@@ -229,7 +231,7 @@ export const DashboardModule: React.FC = () => {
       </div>
 
       {/* ── Charts ── */}
-      {prog.length >= 2 && (
+      {prog.length >= 1 && (
         <div className="grid-2" style={{ marginBottom: 20 }}>
           {/* Score Progression */}
           <div style={{ background: 'white', border: '1px solid #e8eaf0', borderRadius: 16, padding: '20px', boxShadow: '0 1px 3px rgba(15,16,53,0.06)' }}>
@@ -238,8 +240,8 @@ export const DashboardModule: React.FC = () => {
                 <div style={{ fontSize: 15, fontWeight: 600, color: '#111827', letterSpacing: '-0.01em' }}>Score Progression</div>
                 <div style={{ fontSize: 13, color: '#9ca3af', marginTop: 2 }}>Your last {prog.length} attempts</div>
               </div>
-              <div style={{ width: 36, height: 36, borderRadius: 9, background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUp size={18} style={{ color: '#4F46E5' }} />
+              <div style={{ width: 36, height: 36, borderRadius: 9, background: 'rgba(0,122,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendingUp size={18} style={{ color: 'var(--apple-blue)' }} />
               </div>
             </div>
             <ResponsiveContainer width="100%" height={180}>
@@ -266,8 +268,8 @@ export const DashboardModule: React.FC = () => {
                 <div style={{ fontSize: 15, fontWeight: 600, color: '#111827', letterSpacing: '-0.01em' }}>Section Accuracy</div>
                 <div style={{ fontSize: 13, color: '#9ca3af', marginTop: 2 }}>Average % per section</div>
               </div>
-              <div style={{ width: 36, height: 36, borderRadius: 9, background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BarChart2 size={18} style={{ color: '#4F46E5' }} />
+              <div style={{ width: 36, height: 36, borderRadius: 9, background: 'rgba(0,122,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BarChart2 size={18} style={{ color: 'var(--apple-blue)' }} />
               </div>
             </div>
             <ResponsiveContainer width="100%" height={180}>
@@ -290,8 +292,8 @@ export const DashboardModule: React.FC = () => {
           {/* Header */}
           <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 9, background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Clock size={15} style={{ color: '#4F46E5' }} />
+              <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,122,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Clock size={15} style={{ color: 'var(--apple-blue)' }} />
               </div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', letterSpacing: '-0.01em' }}>Recent Attempts</div>

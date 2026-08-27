@@ -119,6 +119,58 @@ app.get('/api/sessions/stats', async (req, res) => {
   }
 });
 
+
+// 6. Update test type
+app.patch('/api/tests/:id', async (req, res) => {
+  try {
+    const { testType } = req.body;
+    if (!['FULL', 'ENGLISH', 'QUANT', 'REASONING'].includes(testType)) {
+      return res.status(400).json({ error: 'Invalid testType' });
+    }
+    const test = await TestModel.findByIdAndUpdate(
+      req.params.id,
+      { testType },
+      { new: true }
+    );
+    if (!test) return res.status(404).json({ error: 'Test not found' });
+    res.json(test);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 7. Delete a test
+app.delete('/api/tests/:id', async (req, res) => {
+  try {
+    const test = await TestModel.findByIdAndDelete(req.params.id);
+    if (!test) return res.status(404).json({ error: 'Test not found' });
+    res.json({ message: 'Test deleted' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 8. Delete a session
+app.delete('/api/sessions/:id', async (req, res) => {
+  try {
+    const session = await SessionModel.findByIdAndDelete(req.params.id);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+    res.json({ message: 'Session deleted' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 9. Get single test by ID (for retake from history)
+app.get('/api/tests/:id', async (req, res) => {
+  try {
+    const test = await TestModel.findById(req.params.id);
+    if (!test) return res.status(404).json({ error: 'Test not found' });
+    res.json(test);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Start server
 app.listen(PORT, async () => {
   await connectDB();

@@ -83,6 +83,14 @@ export default function App() {
     setResponses(final); setScreen('RESULTS');
   };
 
+
+  const retakeFromHistory = async (testId: string) => {
+    try {
+      const { fetchTestById } = await import('./utils/api');
+      const t = await fetchTestById(testId);
+      startTest(t, JSON.stringify(t));
+    } catch { alert('Could not load test. Make sure the server is running.'); }
+  };
   const backToApp = () => {
     setTest(null); setRawJson(''); setResponses([]);
     setIsResume(false); setScreen('APP'); setModule('DASHBOARD');
@@ -170,7 +178,7 @@ export default function App() {
         {screen === 'APP' && module === 'DASHBOARD' && <DashboardModule />}
         {screen === 'APP' && module === 'PRACTICE'  && <PracticeModule onStartTest={startTest} />}
         {screen === 'APP' && module === 'IMPORT'    && <ImportModule />}
-        {screen === 'APP' && module === 'HISTORY'   && <HistoryModule />}
+        {screen === 'APP' && module === 'HISTORY'   && <HistoryModule onRetake={retakeFromHistory} />}
 
         {screen === 'RESULTS' && test && (
           <ResultsScreen

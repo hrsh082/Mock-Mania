@@ -1,8 +1,9 @@
+import { AppleSelect } from './AppleSelect';
 import React, { useState, useEffect } from 'react';
-import { Search, Clock, FileQuestion, Play, SlidersHorizontal, AlertTriangle, BookOpen, MousePointerClick } from 'lucide-react';
+import { Trash2, Search, Clock, FileQuestion, Play, SlidersHorizontal, AlertTriangle, BookOpen, MousePointerClick } from 'lucide-react';
 import { SlidingTabs } from './SlidingTabs';
 import type { Test, TestType } from '../types';
-import { fetchTests } from '../utils/api';
+import { fetchTests, updateTestType, deleteTest } from '../utils/api';
 
 interface Props { onStartTest: (test: Test, rawJson: string) => void; }
 
@@ -54,6 +55,15 @@ export const PracticeModule: React.FC<Props> = ({ onStartTest }) => {
   const totalMin = selected?.sections.reduce((a, s, i) =>
     a + (timers[i] !== undefined ? timers[i] : s.timeLimitMinutes), 0) ?? 0;
 
+  const handleDelete = async (t: Test, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm(`Delete "${t.testTitle}"? This cannot be undone.`)) return;
+    try {
+      await deleteTest(t._id!);
+      setTests(prev => prev.filter(x => x._id !== t._id));
+      if (selected?._id === t._id) setSelected(null);
+    } catch { alert('Failed to delete test.'); }
+  };
   return (
     <div className="page fade-in">
       <div className="page-header">
@@ -110,7 +120,29 @@ export const PracticeModule: React.FC<Props> = ({ onStartTest }) => {
                   >
                     <div className="test-card-title">{t.testTitle}</div>
                     <div className="test-card-meta">
-                      <span className={`badge ${t.testType === 'FULL' ? 'badge-green' : 'badge-slate'}`}>{t.testType ?? 'FULL'}</span>
+                      <button
+                        className="btn btn-ghost btn-icon"
+                        onClick={e => handleDelete(t, e)}
+                        style={{ color: 'var(--apple-red)', padding: '3px 5px', marginLeft: 'auto' }}
+                        title="Delete test"
+                      ><Trash2 size={13} /></button>
+                      <AppleSelect
+                        value={t.testType ?? 'FULL'}
+                        onClick={e => e.stopPropagation()}
+                        onChange={async newType => {
+                          try {
+                            await updateTestType(t._id!, newType);
+                            setTests(prev => prev.map(x => x._id === t._id ? { ...x, testType: newType as any } : x));
+                            if (selected?._id === t._id) setSelected(s => s ? { ...s, testType: newType as any } : s);
+                          } catch { alert('Failed to update type'); }
+                        }}
+                        options={[
+                          { value: 'FULL',      label: 'Full Mock' },
+                          { value: 'ENGLISH',   label: 'English' },
+                          { value: 'QUANT',     label: 'Quant' },
+                          { value: 'REASONING', label: 'Reasoning' },
+                        ]}
+                      />
                       <span className="text-subtle" style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
                         <FileQuestion size={12} /> {q} Qs
                       </span>
@@ -160,17 +192,25 @@ export const PracticeModule: React.FC<Props> = ({ onStartTest }) => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {selected.sections.filter(s => s.questions.length > 0 && s.timeLimitMinutes > 0).map((s, i) => (
                     <div key={i} className="timer-row">
-                      <span style={{ fontWeight: 600, color: 'var(--slate-700)', fontSize: 12, flex: 1 }}>{s.sectionName}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <input
-                          type="number"
-                          min="0.5"
-                          step="0.5"
-                          className="timer-input"
-                          value={timers[i] !== undefined ? timers[i] : s.timeLimitMinutes}
-                          onChange={e => setTimers(p => ({ ...p, [i]: Math.max(0.5, parseFloat(e.target.value) || s.timeLimitMinutes) }))}
-                        />
-                        <span style={{ fontSize: 11, color: 'var(--slate-400)', fontWeight: 500 }}>min</span>
+                      <span style={{ fontWeight: 500, color: 'var(--text-secondary)', fontSize: 12, flex: 1 }}>{s.sectionName}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {/* Custom stepper */}
+                        <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(118,118,128,0.12)', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
+                          <button
+                            type="button"
+                            onClick={() => setTimers(p => ({ ...p, [i]: Math.max(0.5, ((p[i] !== undefined ? p[i] : s.timeLimitMinutes)) - 0.5) }))}
+                            style={{ width: 28, height: 30, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 300, lineHeight: 1 }}
+                          >-</button>
+                          <span style={{ minWidth: 32, textAlign: 'center', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', userSelect: 'none' }}>
+                            {timers[i] !== undefined ? timers[i] : s.timeLimitMinutes}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setTimers(p => ({ ...p, [i]: ((p[i] !== undefined ? p[i] : s.timeLimitMinutes)) + 0.5 }))}
+                            style={{ width: 28, height: 30, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 300, lineHeight: 1 }}
+                          >+</button>
+                        </div>
+                        <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 500 }}>min</span>
                       </div>
                     </div>
                   ))}

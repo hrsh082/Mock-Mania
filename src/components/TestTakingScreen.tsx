@@ -3,6 +3,20 @@ import { Clock, ChevronRight, Bookmark, AlertCircle, Eye, EyeOff, LayoutGrid } f
 import type { Test, UserResponse, QuestionStatus } from '../types';
 import confetti from 'canvas-confetti';
 
+
+/** Renders **bold** and _italic_ markdown inline safely as React elements */
+function renderRichText(text: string): React.ReactNode {
+  if (!text) return text;
+  // Split on **bold** and _italic_ markers
+  const parts = text.split(/(\*\*[^*]+\*\*|_[^_]+_)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**'))
+      return <strong key={i} style={{ fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith('_') && part.endsWith('_'))
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    return part;
+  });
+}
 interface Props {
   test: Test;
   onSubmit: (responses: UserResponse[]) => void;
@@ -97,7 +111,12 @@ export const TestTakingScreen: React.FC<Props> = ({
     updateResp(q.id, newStatus, label);
   };
 
-  const handleClear = () => { if (q) updateResp(q.id, 'NOT_ANSWERED', null); };
+const handleClear = () => {
+    if (!q) return;
+    const cur = getResp(q.id);
+    const isMarked = cur?.status === 'MARKED_FOR_REVIEW' || cur?.status === 'MARKED_AND_ANSWERED';
+    updateResp(q.id, isMarked ? 'MARKED_FOR_REVIEW' : 'NOT_ANSWERED', null);
+  };
 
   const goNext = () => {
     if (qIdx < sec.questions.length - 1) {
@@ -110,7 +129,12 @@ export const TestTakingScreen: React.FC<Props> = ({
   const handleSaveNext = () => {
     if (q) {
       const cur = getResp(q.id);
-      if (!cur?.selectedAnswer) updateResp(q.id, 'NOT_ANSWERED');
+      // "Save & Next" explicitly saves - removes any mark
+      if (cur?.selectedAnswer) {
+        updateResp(q.id, 'ANSWERED', cur.selectedAnswer);
+      } else {
+        updateResp(q.id, 'NOT_ANSWERED', null);
+      }
     }
     goNext();
   };
@@ -221,7 +245,7 @@ export const TestTakingScreen: React.FC<Props> = ({
                 </button>
               </div>
               <div style={{ lineHeight: 1.85, fontSize: 13.5, color: 'var(--slate-700)', whiteSpace: 'pre-wrap' }}>
-                {q.passage}
+                {renderRichText(q.passage ?? '')}
               </div>
             </div>
           )}
@@ -243,7 +267,7 @@ export const TestTakingScreen: React.FC<Props> = ({
               )}
             </div>
 
-            <div className="question-text">{q.questionText}</div>
+            <div className="question-text">{renderRichText(q.questionText)}</div>
 
             <div className="option-list">
               {q.options.map(opt => {
@@ -255,7 +279,7 @@ export const TestTakingScreen: React.FC<Props> = ({
                     onClick={() => handleSelect(opt.label)}
                   >
                     <span className="option-label">{opt.label}</span>
-                    <span style={{ flex: 1 }}>{opt.text}</span>
+                    <span style={{ flex: 1 }}>{renderRichText(opt.text)}</span>
                   </button>
                 );
               })}

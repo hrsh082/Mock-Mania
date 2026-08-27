@@ -69,3 +69,31 @@ export async function fetchSessionsHistory(): Promise<any[]> {
   }
   return res.json();
 }
+
+export async function updateTestType(id: string, testType: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/tests/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ testType }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to update test type');
+  }
+}
+
+export async function deleteTest(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/tests/${id}`, { method: 'DELETE' });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Failed to delete test'); }
+}
+
+export async function deleteSession(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/sessions/${id}`, { method: 'DELETE' });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Failed to delete session'); }
+}
+
+export async function fetchTestById(id: string): Promise<any> {
+  const res = await fetch(`${API_BASE_URL}/tests/${id}`);
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Test not found'); }
+  return res.json();
+}
