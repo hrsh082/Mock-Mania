@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   History, ChevronDown, ChevronUp, BarChart2,
   Calendar, Target, Award, Trash2, RotateCcw,
@@ -95,7 +95,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
           {/* Search */}
           <div className="search-wrapper" style={{ flex: 1, minWidth: 200 }}>
             <Search className="search-icon" size={13} />
-            <input className="input input-sm" style={{ paddingLeft: 30 }} placeholder="Search by test name…" value={search} onChange={e => setSearch(e.target.value)} />
+            <input className="input input-sm" style={{ paddingLeft: 30 }} placeholder="Search by test name�" value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           {/* Date filter */}
           <div style={{ display: 'flex', background: 'rgba(118,118,128,0.10)', borderRadius: 9, padding: 3, gap: 2 }}>
@@ -139,7 +139,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
       )}
 
       {loading ? (
-        <div className="empty-state">Loading history…</div>
+        <div className="empty-state">Loading history�</div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
           <History size={24} />
@@ -204,12 +204,13 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                   </div>
                 </div>
 
-                {/* Expanded breakdown */}
-                {isOpen && s.sectionBreakdown && (() => {
+                {/* Expanded breakdown � animated slide */}
+                {s.sectionBreakdown && (() => {
                   const tc = s.sectionBreakdown.reduce((a: number, sec: any) => a + (sec.correct ?? 0), 0);
                   const tw = s.sectionBreakdown.reduce((a: number, sec: any) => a + (sec.wrong   ?? 0), 0);
                   const tq = s.sectionBreakdown.reduce((a: number, sec: any) => a + (sec.totalQuestions ?? 0), 0);
                   return (
+                    <div style={{ overflow: 'hidden', maxHeight: isOpen ? 1000 : 0, transition: 'max-height 0.32s cubic-bezier(0.4,0,0.2,1)', }}>
                     <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                       {/* Mini summary */}
                       <div style={{ display: 'flex', justifyContent: 'space-around', padding: '12px 20px', background: 'rgba(0,0,0,0.02)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
@@ -236,8 +237,8 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                               <span style={{ fontWeight: 600, fontSize: 12.5, color: 'var(--text-primary)' }}>{sec.sectionName}</span>
                               <span style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', gap: 12 }}>
-                                <span style={{ color: 'var(--green-500)' }}>✓ {sec.correct}</span>
-                                <span style={{ color: 'var(--apple-red)' }}>✗ {sec.wrong}</span>
+                                <span style={{ color: 'var(--green-500)' }}>? {sec.correct}</span>
+                                <span style={{ color: 'var(--apple-red)' }}>? {sec.wrong}</span>
                                 <strong style={{ color: 'var(--text-primary)' }}>{sec.score}/{sec.maxPossibleScore ?? sec.totalQuestions}</strong>
                               </span>
                             </div>
@@ -248,6 +249,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                           </div>
                         );
                       })}
+                    </div>
                     </div>
                   );
                 })()}
@@ -284,8 +286,8 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
             {(() => {
               const [a, b] = cmpSessions as any[];
               const winner = a.totalScore > b.totalScore ? 0 : a.totalScore < b.totalScore ? 1 : -1;
-              if (winner === -1) return <div className="alert alert-info" style={{ marginBottom: 12, justifyContent: 'center', textAlign: 'center' }}>🤝 Both sessions scored equally!</div>;
-              return <div className="alert alert-success" style={{ marginBottom: 12 }}>🏆 Session {winner + 1} wins by {Math.abs(a.totalScore - b.totalScore)} points ({Math.abs(a.accuracy - b.accuracy).toFixed(1)}% accuracy diff)</div>;
+              if (winner === -1) return <div className="alert alert-info" style={{ marginBottom: 12, justifyContent: 'center', textAlign: 'center' }}>?? Both sessions scored equally!</div>;
+              return <div className="alert alert-success" style={{ marginBottom: 12 }}>?? Session {winner + 1} wins by {Math.abs(a.totalScore - b.totalScore)} points ({Math.abs(a.accuracy - b.accuracy).toFixed(1)}% accuracy diff)</div>;
             })()}
 
             {/* Section comparison */}
@@ -303,16 +305,16 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
                       <div style={{ height: 6, background: 'rgba(0,122,255,0.15)', borderRadius: 99, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${acc1}%`, background: 'var(--apple-blue)', borderRadius: 99 }} />
                       </div>
-                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc1}% · {sec.correct}/{sec.attempted} correct</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc1}% � {sec.correct}/{sec.attempted} correct</div>
                     </div>
                     <div style={{ textAlign: 'center', fontSize: 10, color: 'var(--text-tertiary)', fontWeight: 700 }}>
-                      {acc1 > acc2 ? '🔵' : acc2 > acc1 ? '🟣' : '='}
+                      {acc1 > acc2 ? '??' : acc2 > acc1 ? '??' : '='}
                     </div>
                     <div>
                       <div style={{ height: 6, background: 'rgba(88,86,214,0.15)', borderRadius: 99, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${acc2}%`, background: 'var(--apple-purple)', borderRadius: 99 }} />
                       </div>
-                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc2}% · {sec2.correct}/{sec2.attempted} correct</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{acc2}% � {sec2.correct}/{sec2.attempted} correct</div>
                     </div>
                   </div>
                 </div>
