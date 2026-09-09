@@ -81,7 +81,7 @@ export const PracticeModule: React.FC<Props> = ({ onStartTest }) => {
             <SlidingTabs
               tabs={TYPE_TABS}
               value={tab}
-              onChange={setTab}
+              onChange={v => setTab(v as 'ALL' | TestType)}
             />
             <div className="search-wrapper">
               <Search className="search-icon" size={13} />

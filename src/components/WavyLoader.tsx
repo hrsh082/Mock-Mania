@@ -15,7 +15,7 @@ const SCALLOP_PATH = (() => {
   const cx = 50;
   const cy = 50;
   const rOuter = 44;
-  const depth = 4.2;
+  const depth = 4.5;
   const scallops = 12;
   const totalSteps = scallops * 4;
   const points: { x: number; y: number }[] = [];
@@ -56,7 +56,7 @@ export const WavyLoader: React.FC<WavyLoaderProps> = ({
 }) => {
   const pixelSize = typeof size === 'number'
     ? size
-    : size === 'sm' ? 24 : size === 'lg' ? 96 : 56;
+    : size === 'sm' ? 26 : size === 'lg' ? 96 : 56;
 
   const loaderElement = (
     <div
@@ -89,89 +89,84 @@ export const WavyLoader: React.FC<WavyLoaderProps> = ({
               <path d={SCALLOP_PATH} />
             </clipPath>
 
-            {/* Premium Purple Liquid Gradient */}
-            <linearGradient id="purpleLiquid" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#818cf8" />
-              <stop offset="50%" stopColor="#6366f1" />
+            {/* Base Solid Purple/Indigo Fill */}
+            <linearGradient id="solidBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#7c3aed" />
+              <stop offset="60%" stopColor="#6366f1" />
               <stop offset="100%" stopColor="#4f46e5" />
             </linearGradient>
 
-            {/* Deep wave gradient */}
-            <linearGradient id="waveFront" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#a5b4fc" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="#6366f1" stopOpacity="1" />
-            </linearGradient>
-
-            {/* Glowing rim stroke gradient */}
-            <linearGradient id="rimGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-              <stop offset="50%" stopColor="#c7d2fe" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#818cf8" stopOpacity="0.9" />
+            {/* White/Translucent Liquid Shade Gradient */}
+            <linearGradient id="whiteLiquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
+              <stop offset="40%" stopColor="#c7d2fe" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#818cf8" stopOpacity="0.8" />
             </linearGradient>
           </defs>
 
-          {/* Outer soft shadow glow */}
+          {/* Outer soft glowing shadow */}
           <path
             d={SCALLOP_PATH}
             fill="#6366f1"
-            opacity="0.25"
+            opacity="0.3"
             style={{
-              filter: 'blur(6px)',
+              filter: 'blur(8px)',
               transformOrigin: '50px 50px',
-              animation: 'wavyPulse 2.4s ease-in-out infinite alternate'
+              animation: 'wavyPulse 2s ease-in-out infinite alternate'
             }}
           />
 
-          {/* Liquid container inside scalloped badge */}
+          {/* Liquid Container Inside Scalloped Badge */}
           <g clipPath="url(#scallopClip)">
-            {/* Base liquid fill */}
-            <rect x="0" y="0" width="100" height="100" fill="url(#purpleLiquid)" />
+            {/* 1. Base solid purple color inside center */}
+            <rect x="0" y="0" width="100" height="100" fill="url(#solidBaseGrad)" />
 
-            {/* Sloshing Wave Layer 1 (Back wave) */}
+            {/* 2. White liquid shade moving UP from below */}
             <path
-              className="wavy-wave-back"
-              d="M -100 42 Q -50 32 0 42 T 100 42 T 200 42 V 110 H -100 Z"
-              fill="rgba(255, 255, 255, 0.22)"
+              className="wavy-liquid-rise"
+              d="M -100 50 Q -50 38 0 50 T 100 50 T 200 50 V 120 H -100 Z"
+              fill="url(#whiteLiquidGrad)"
             />
 
-            {/* Sloshing Wave Layer 2 (Front liquid wave) */}
+            {/* 3. Second sloshing translucent white wave */}
             <path
-              className="wavy-wave-front"
-              d="M -100 48 Q -50 58 0 48 T 100 48 T 200 48 V 110 H -100 Z"
-              fill="url(#waveFront)"
+              className="wavy-liquid-front"
+              d="M -100 56 Q -50 66 0 56 T 100 56 T 200 56 V 120 H -100 Z"
+              fill="rgba(255, 255, 255, 0.45)"
             />
 
-            {/* Highlights and specular glint */}
-            <ellipse cx="50" cy="22" rx="28" ry="10" fill="rgba(255, 255, 255, 0.25)" />
           </g>
 
-          {/* Scalloped Badge Outer Border Contour */}
+          {/* BOLD Scalloped Badge Outer Border Base */}
           <path
             d={SCALLOP_PATH}
             fill="none"
-            stroke="url(#rimGlow)"
-            strokeWidth="3"
+            stroke="#818cf8"
+            strokeWidth="4"
             strokeLinecap="round"
             strokeLinejoin="round"
+            opacity="0.85"
           />
 
-          {/* Inner crisp accent line */}
+          {/* Inner Crisp White Rim */}
           <path
-            d={SCALLOP_PATH}
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.75)"
-            strokeWidth="1.2"
-          />
-
-          {/* Rotating edge light pulse */}
-          <path
-            className="wavy-rim-light"
             d={SCALLOP_PATH}
             fill="none"
             stroke="#ffffff"
-            strokeWidth="2.5"
-            strokeDasharray="25 180"
+            strokeWidth="2"
+            opacity="0.9"
+          />
+
+          {/* BOLD Moving Highlight Arc Segment tracing along the border */}
+          <path
+            className="wavy-bold-border-move"
+            d={SCALLOP_PATH}
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="4.5"
+            strokeDasharray="50 160"
             strokeLinecap="round"
+            style={{ filter: 'drop-shadow(0 0 3px #ffffff)' }}
           />
         </svg>
       </div>
