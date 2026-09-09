@@ -1,26 +1,30 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const OptionSchema = new mongoose.Schema({
+const OptionSchema = new Schema({
   label: { type: String, required: true },
-  text: { type: String, required: true }
+  text: { type: String, required: false, default: '' },
+  imageUrl: { type: String, required: false }
 }, { _id: false });
 
-const QuestionSchema = new mongoose.Schema({
+const QuestionSchema = new Schema({
   id: { type: String, required: true },
   questionText: { type: String, required: true },
   passage: { type: String, default: null },
+  passageImageUrl: { type: String, required: false },
+  imageUrl: { type: String, required: false },
   options: [OptionSchema],
   correctAnswer: { type: String, required: true },
-  explanation: { type: String, default: '' }
+  explanation: { type: String, default: '' },
+  explanationImageUrl: { type: String, required: false }
 }, { _id: false });
 
-const SectionSchema = new mongoose.Schema({
+const SectionSchema = new Schema({
   sectionName: { type: String, required: true },
   timeLimitMinutes: { type: Number, required: true },
   questions: [QuestionSchema]
 }, { _id: false });
 
-const TestSchema = new mongoose.Schema({
+const TestSchema = new Schema({
   testTitle: { type: String, required: true },
   testType: { type: String, enum: ['FULL', 'ENGLISH', 'QUANT', 'REASONING'], default: 'FULL' },
   markingScheme: {
@@ -31,7 +35,7 @@ const TestSchema = new mongoose.Schema({
   sections: [SectionSchema]
 }, { timestamps: true });
 
-const SectionBreakdownSchema = new mongoose.Schema({
+const SectionBreakdownSchema = new Schema({
   sectionName: { type: String, required: true },
   totalQuestions: { type: Number, required: true },
   attempted: { type: Number, required: true },
@@ -41,8 +45,8 @@ const SectionBreakdownSchema = new mongoose.Schema({
   score: { type: Number, required: true }
 }, { _id: false });
 
-const SessionSchema = new mongoose.Schema({
-  testId: { type: mongoose.Schema.Types.ObjectId, ref: 'Test', required: false },
+const SessionSchema = new Schema({
+  testId: { type: Schema.Types.ObjectId, ref: 'Test', required: false },
   testTitle: { type: String, required: true },
   totalScore: { type: Number, required: true },
   maxPossibleScore: { type: Number, required: true },

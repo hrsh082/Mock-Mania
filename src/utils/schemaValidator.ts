@@ -22,9 +22,33 @@ export function validateTestSchema(jsonString: string): { valid: boolean; errors
   if (typeof data !== 'object' || data === null) {
     return {
       valid: false,
-      errors: [{ path: 'Root', message: 'Uploaded content must be a JSON object' }],
+      errors: [{ path: 'Root', message: 'Uploaded content must be a JSON object or array' }],
       testData: null
     };
+  }
+
+  // Smart Auto-Healing: Handle partial JSON snippets (e.g. single section or section arrays)
+  if (Array.isArray(data)) {
+    data = {
+      testTitle: 'Imported Mock Test',
+      markingScheme: { correct: 1.0, wrong: -0.25, unattempted: 0.0 },
+      sections: data
+    };
+  } else if (typeof data === 'object') {
+    if (!data.sections && (data.sectionName || data.questions)) {
+      data = {
+        testTitle: data.sectionName ? `${data.sectionName} Test` : 'Imported Mock Test',
+        markingScheme: { correct: 1.0, wrong: -0.25, unattempted: 0.0 },
+        sections: [data]
+      };
+    } else {
+      if (!data.testTitle || typeof data.testTitle !== 'string' || data.testTitle.trim() === '') {
+        data.testTitle = 'Imported Mock Test';
+      }
+      if (!data.markingScheme || typeof data.markingScheme !== 'object') {
+        data.markingScheme = { correct: 1.0, wrong: -0.25, unattempted: 0.0 };
+      }
+    }
   }
 
   // 1. Root Level Validation
@@ -117,6 +141,14 @@ export function validateTestSchema(jsonString: string): { valid: boolean; errors
         errors.push({ path: `${qPath}.passage`, message: `In section "${secName}", ${qIdentifier} passage must be a string or null` });
       }
 
+      if (q.passageImageUrl !== undefined && q.passageImageUrl !== null && typeof q.passageImageUrl !== 'string') {
+        errors.push({ path: `${qPath}.passageImageUrl`, message: `In section "${secName}", ${qIdentifier} passageImageUrl must be a string` });
+      }
+
+      if (q.imageUrl !== undefined && q.imageUrl !== null && typeof q.imageUrl !== 'string') {
+        errors.push({ path: `${qPath}.imageUrl`, message: `In section "${secName}", ${qIdentifier} imageUrl must be a string` });
+      }
+
       if (!q.options || !Array.isArray(q.options) || q.options.length === 0) {
         errors.push({ path: `${qPath}.options`, message: `In section "${secName}", ${qIdentifier} must have a non-empty options array` });
         return;
@@ -139,8 +171,15 @@ export function validateTestSchema(jsonString: string): { valid: boolean; errors
           labels.add(opt.label);
         }
 
-        if (opt.text === undefined || opt.text === null || typeof opt.text !== 'string' || opt.text.trim() === '') {
-          errors.push({ path: `${optPath}.text`, message: `In section "${secName}", ${qIdentifier}, option "${opt?.label || optIdx + 1}" text is missing or empty` });
+        if (opt.imageUrl !== undefined && opt.imageUrl !== null && typeof opt.imageUrl !== 'string') {
+          errors.push({ path: `${optPath}.imageUrl`, message: `In section "${secName}", ${qIdentifier}, option "${opt?.label || optIdx + 1}" imageUrl must be a string` });
+        }
+
+        const hasText = opt.text !== undefined && opt.text !== null && typeof opt.text === 'string' && opt.text.trim() !== '';
+        const hasImg  = opt.imageUrl !== undefined && opt.imageUrl !== null && typeof opt.imageUrl === 'string' && opt.imageUrl.trim() !== '';
+
+        if (!hasText && !hasImg) {
+          errors.push({ path: `${optPath}.text`, message: `In section "${secName}", ${qIdentifier}, option "${opt?.label || optIdx + 1}" must have either text or an imageUrl` });
         }
       });
 
@@ -155,6 +194,10 @@ export function validateTestSchema(jsonString: string): { valid: boolean; errors
 
       if (q.explanation !== undefined && q.explanation !== null && typeof q.explanation !== 'string') {
         errors.push({ path: `${qPath}.explanation`, message: `In section "${secName}", ${qIdentifier} explanation must be a string` });
+      }
+
+      if (q.explanationImageUrl !== undefined && q.explanationImageUrl !== null && typeof q.explanationImageUrl !== 'string') {
+        errors.push({ path: `${qPath}.explanationImageUrl`, message: `In section "${secName}", ${qIdentifier} explanationImageUrl must be a string` });
       }
     });
   });

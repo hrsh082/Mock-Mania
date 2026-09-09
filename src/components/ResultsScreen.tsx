@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   Award, CheckCircle2, XCircle, HelpCircle, BarChart2, Bookmark,
   RefreshCw, TrendingUp, ChevronDown, ChevronUp,
-  ArrowLeft, Minus, BookOpen, Target, Zap, Hash
+  ArrowLeft, BookOpen, Target, Zap, Hash
 } from 'lucide-react';
 import type { Test, UserResponse, GrandResult } from '../types';
 import { calculateResults } from '../utils/scoring';
 import { submitSessionResult, fetchPerformanceStats } from '../utils/api';
+import { formatImgSrc } from '../utils/imageUtils';
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip
@@ -91,7 +92,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
     { key: 'ALL',     label: 'All',     icon: Hash,        color: 'var(--gray-500)' },
     { key: 'CORRECT', label: 'Correct', icon: CheckCircle2, color: 'var(--green-600)' },
     { key: 'WRONG',   label: 'Wrong',   icon: XCircle,      color: 'var(--red-500)'   },
-    { key: 'SKIPPED', label: 'Skipped', icon: Minus,        color: 'var(--gray-400)'  },
+    { key: 'SKIPPED', label: 'Skipped', icon: HelpCircle,   color: '#f59e0b' },
     { key: 'MARKED',  label: 'Marked',  icon: Bookmark,    color: 'var(--apple-purple)' },
   ];
 
@@ -375,7 +376,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
               const isEx = expanded[q.id];
               
               // Status strip color
-              const strip = skip ? '#d1d5db' : ok ? '#10b981' : '#ef4444';
+              const strip = skip ? '#f59e0b' : ok ? '#10b981' : '#ef4444';
 
               return (
                 <div key={q.id} style={{ background: 'white', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-xs)' }}>
@@ -389,7 +390,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           {skip
-                            ? <HelpCircle  size={14} style={{ color: '#9ca3af' }} />
+                            ? <HelpCircle  size={14} style={{ color: '#f59e0b' }} />
                             : ok
                             ? <CheckCircle2 size={14} style={{ color: '#10b981' }} />
                             : <XCircle     size={14} style={{ color: '#ef4444' }} />
@@ -400,11 +401,11 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                         </div>
                         <span style={{
                           fontSize: 10.5, fontWeight: 600, padding: '2px 9px', borderRadius: 99,
-                          background: skip ? 'var(--gray-100)' : ok ? '#d1fae5' : '#fee2e2',
-                          color: skip ? 'var(--gray-500)' : ok ? '#065f46' : '#991b1b',
-                          border: `1px solid ${skip ? 'var(--gray-200)' : ok ? '#a7f3d0' : '#fecaca'}`,
+                          background: skip ? '#fef3c7' : ok ? '#d1fae5' : '#fee2e2',
+                          color: skip ? '#b45309' : ok ? '#065f46' : '#991b1b',
+                          border: `1px solid ${skip ? '#fde68a' : ok ? '#a7f3d0' : '#fecaca'}`,
                         }}>
-                          {skip ? 'Skipped' : ok ? 'Correct' : 'Wrong'}
+                          {skip ? 'Unattempted' : ok ? 'Correct' : 'Wrong'}
                         </span>
                       </div>
 
@@ -423,9 +424,16 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                       )}
 
                       {/* Question text */}
-                      <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--gray-900)', lineHeight: 1.65, marginBottom: 14, letterSpacing: '-0.01em' }}>
+                      <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--gray-900)', lineHeight: 1.65, marginBottom: q.imageUrl ? 10 : 14, letterSpacing: '-0.01em' }}>
                         {q.questionText}
                       </div>
+
+                      {/* Question visual figure / diagram */}
+                      {q.imageUrl && (
+                        <div className="q-visual-wrap" style={{ marginBottom: 14 }}>
+                          <img src={formatImgSrc(q.imageUrl)} alt="Question figure" className="q-visual-img" />
+                        </div>
+                      )}
 
                       {/* ── Options — horizontal for short, vertical for long ── */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -461,7 +469,12 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: 10.5, fontWeight: 600, flexShrink: 0,
                               }}>{opt.label}</span>
-                              <span style={{ flex: 1 }}>{opt.text}</span>
+                              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                {opt.text && <span>{opt.text}</span>}
+                                {opt.imageUrl && (
+                                  <img src={formatImgSrc(opt.imageUrl)} alt={`Option ${opt.label}`} className="opt-visual-img" />
+                                )}
+                              </div>
                               {isCorrect && <CheckCircle2 size={14} style={{ flexShrink: 0, color: '#10b981', marginTop: 2 }} />}
                               {isWrong   && <XCircle     size={14} style={{ flexShrink: 0, color: '#ef4444', marginTop: 2 }} />}
                             </div>
@@ -485,7 +498,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                             Correct: <strong style={{ color: '#10b981' }}>{q.correctAnswer}</strong>
                           </span>
                         </div>
-                        {q.explanation && (
+                        {(q.explanation || q.explanationImageUrl) && (
                           <button
                             onClick={() => setExpanded(p => ({ ...p, [q.id]: !p[q.id] }))}
                             style={{
@@ -502,7 +515,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                       </div>
 
                       {/* Explanation (expandable) */}
-                      {isEx && q.explanation && (
+                      {isEx && (q.explanation || q.explanationImageUrl) && (
                         <div className="fade-in" style={{
                           marginTop: 10, padding: '12px 14px',
                           background: 'var(--indigo-50)',
@@ -512,7 +525,12 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, fontWeight: 600, color: 'var(--indigo-700)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                             <Zap size={12} /> Explanation
                           </div>
-                          {q.explanation}
+                          {q.explanation && <div>{q.explanation}</div>}
+                          {q.explanationImageUrl && (
+                            <div style={{ marginTop: 8 }}>
+                              <img src={formatImgSrc(q.explanationImageUrl)} alt="Visual Solution" className="explanation-image" />
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

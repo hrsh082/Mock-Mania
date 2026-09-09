@@ -1,15 +1,19 @@
 export interface Option {
   label: string;
-  text: string;
+  text?: string;
+  imageUrl?: string;
 }
 
 export interface Question {
   id: string;
   questionText: string;
   passage: string | null;
+  passageImageUrl?: string;
+  imageUrl?: string;
   options: Option[];
   correctAnswer: string;
   explanation?: string;
+  explanationImageUrl?: string;
 }
 
 export interface Section {

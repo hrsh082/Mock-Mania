@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, ChevronRight, Bookmark, AlertCircle, Eye, EyeOff, LayoutGrid } from 'lucide-react';
 import type { Test, UserResponse, QuestionStatus } from '../types';
 import confetti from 'canvas-confetti';
+import { formatImgSrc } from '../utils/imageUtils';
 
 
 /** Renders **bold** and _italic_ markdown inline safely as React elements */
@@ -55,7 +56,7 @@ export const TestTakingScreen: React.FC<Props> = ({
   const q   = sec?.questions[qIdx];
 
   const [secsLeft, setSecsLeft] = useState(() =>
-    initialSecondsLeft !== undefined ? initialSecondsLeft : Math.floor(sec.timeLimitMinutes * 60)
+    initialSecondsLeft !== undefined ? initialSecondsLeft : (sec?.timeLimitMinutes ? Math.floor(sec.timeLimitMinutes * 60) : 0)
   );
 
   const fmt = (s: number) => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
@@ -74,18 +75,14 @@ export const TestTakingScreen: React.FC<Props> = ({
   useEffect(() => {
     if (secsLeft <= 0) { handleTimeout(); return; }
     const t = setInterval(() => {
-      setSecsLeft(p => {
-        const n = p - 1;
-        onStateUpdate?.(secIdx, qIdx, n, responses);
-        return n;
-      });
+      setSecsLeft(p => p - 1);
     }, 1000);
     return () => clearInterval(t);
   }, [secsLeft, secIdx]);
 
   useEffect(() => {
     onStateUpdate?.(secIdx, qIdx, secsLeft, responses);
-  }, [responses, qIdx, secIdx]);
+  }, [secsLeft, responses, qIdx, secIdx]);
 
   const getResp = (id: string) => responses.find(r => r.questionId === id);
 
@@ -234,25 +231,32 @@ const handleClear = () => {
         {/* Main question area */}
         <div className="exam-main">
           {/* Passage */}
-          {isPassage && showPass && (
+          {(isPassage || q.passageImageUrl) && showPass && (
             <div className="passage-card fade-in">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--green-700)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                  Reading Passage
+                  Reading Passage / Reference
                 </span>
                 <button className="btn btn-ghost btn-sm" onClick={() => setShowPass(false)} style={{ gap: 4 }}>
                   <EyeOff size={13} /> Hide
                 </button>
               </div>
-              <div style={{ lineHeight: 1.85, fontSize: 13.5, color: 'var(--slate-700)', whiteSpace: 'pre-wrap' }}>
-                {renderRichText(q.passage ?? '')}
-              </div>
+              {q.passage && (
+                <div style={{ lineHeight: 1.85, fontSize: 13.5, color: 'var(--slate-700)', whiteSpace: 'pre-wrap', marginBottom: q.passageImageUrl ? 12 : 0 }}>
+                  {renderRichText(q.passage)}
+                </div>
+              )}
+              {q.passageImageUrl && (
+                <div className="passage-image-wrap">
+                  <img src={formatImgSrc(q.passageImageUrl)} alt="Passage diagram" className="passage-image" />
+                </div>
+              )}
             </div>
           )}
 
-          {isPassage && !showPass && (
+          {(isPassage || q.passageImageUrl) && !showPass && (
             <button className="btn btn-secondary btn-sm" onClick={() => setShowPass(true)} style={{ alignSelf: 'flex-start' }}>
-              <Eye size={13} /> Show Passage
+              <Eye size={13} /> Show Reference / Passage
             </button>
           )}
 
@@ -269,17 +273,29 @@ const handleClear = () => {
 
             <div className="question-text">{renderRichText(q.questionText)}</div>
 
-            <div className="option-list">
+            {/* Question visual figure / diagram */}
+            {q.imageUrl && (
+              <div className="q-visual-wrap">
+                <img src={formatImgSrc(q.imageUrl)} alt={`Question ${qIdx + 1} Figure`} className="q-visual-img" />
+              </div>
+            )}
+
+            <div className={`option-list ${q.options.some(o => o.imageUrl) ? 'option-grid' : ''}`}>
               {q.options.map(opt => {
                 const sel = curResp?.selectedAnswer === opt.label;
                 return (
                   <button
                     key={opt.label}
-                    className={`option-btn${sel ? ' selected' : ''}`}
+                    className={`option-btn${sel ? ' selected' : ''}${opt.imageUrl ? ' has-image' : ''}`}
                     onClick={() => handleSelect(opt.label)}
                   >
                     <span className="option-label">{opt.label}</span>
-                    <span style={{ flex: 1 }}>{renderRichText(opt.text)}</span>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, alignItems: opt.imageUrl ? 'flex-start' : 'initial' }}>
+                      {opt.text && <span>{renderRichText(opt.text)}</span>}
+                      {opt.imageUrl && (
+                        <img src={formatImgSrc(opt.imageUrl)} alt={`Option ${opt.label}`} className="opt-visual-img" />
+                      )}
+                    </div>
                   </button>
                 );
               })}

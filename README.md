@@ -81,8 +81,12 @@ Mock tests uploaded to the application must adhere strictly to the following JSO
      - `id` `(String)`: Unique identifier for the question (must be unique across the entire test).
      - `questionText` `(String)`: The question statement.
      - `passage` `(String | null)`: Optional reading-comprehension or shared text. Displayed in a side panel if present.
+     - `passageImageUrl` `(String, Optional)`: Optional URL or Data URI for passage diagrams/charts.
+     - `imageUrl` `(String, Optional)`: Optional URL or Data URI for visual non-verbal reasoning figures or question diagrams.
      - `options` `(Array)`: Options list containing objects with:
        - `label` `(String)`: Identifier label (e.g. "A", "B", "C").
-       - `text` `(String)`: Option description.
+       - `text` `(String, Optional)`: Option description text (optional if `imageUrl` is provided).
+       - `imageUrl` `(String, Optional)`: Optional URL or Data URI for visual figure choice options.
      - `correctAnswer` `(String)`: Label matching one of the options (e.g. "B").
      - `explanation` `(String, Optional)`: Helpful review description displayed in post-test analysis.
+     - `explanationImageUrl` `(String, Optional)`: Optional URL or Data URI for step-by-step visual solutions.
