@@ -942,3 +942,40 @@ input[type="checkbox"]:focus-visible { box-shadow: 0 0 0 3px rgba(0,122,255,0.25
   background: rgba(245, 245, 247, 0.8);
   border-top: 1px solid var(--border);
 }
+
+/* Wavy Badge Liquid Loader Animations */
+@keyframes wavyWaveFront {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(-50px) translateY(-3px); }
+  100% { transform: translateX(-100px) translateY(0); }
+}
+
+@keyframes wavyWaveBack {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(40px) translateY(4px); }
+  100% { transform: translateX(80px) translateY(0); }
+}
+
+@keyframes wavyPulse {
+  0% { transform: scale(0.96); opacity: 0.2; }
+  100% { transform: scale(1.04); opacity: 0.35; }
+}
+
+@keyframes wavyRimRotate {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -205; }
+}
+
+.wavy-wave-front {
+  animation: wavyWaveFront 2.2s ease-in-out infinite alternate;
+}
+
+.wavy-wave-back {
+  animation: wavyWaveBack 3.2s ease-in-out infinite alternate;
+}
+
+.wavy-rim-light {
+  animation: wavyRimRotate 3s linear infinite;
+  transform-origin: 50px 50px;
+}
+

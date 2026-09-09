@@ -4,6 +4,7 @@ import { Trash2, Search, Clock, FileQuestion, Play, SlidersHorizontal, AlertTria
 import { SlidingTabs } from './SlidingTabs';
 import type { Test, TestType } from '../types';
 import { fetchTests, updateTestType, deleteTest } from '../utils/api';
+import { WavyLoader } from './WavyLoader';
 
 interface Props { onStartTest: (test: Test, rawJson: string) => void; }
 
@@ -96,7 +97,7 @@ export const PracticeModule: React.FC<Props> = ({ onStartTest }) => {
 
           {/* Test list */}
           {loading ? (
-            <div className="empty-state">Loading catalog…</div>
+            <WavyLoader size="md" text="Loading test catalog..." subtext="Fetching saved tests from library" />
           ) : error ? (
             <div className="alert alert-error">
               <AlertTriangle size={16} className="alert-icon" />

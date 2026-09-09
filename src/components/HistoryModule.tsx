@@ -5,6 +5,7 @@ import {
   Search, GitCompare, X, AlertTriangle
 } from 'lucide-react';
 import { fetchSessionsHistory, deleteSession } from '../utils/api';
+import { WavyLoader } from './WavyLoader';
 
 interface Props { onRetake?: (testId: string) => void; }
 
@@ -139,7 +140,7 @@ export const HistoryModule: React.FC<Props> = ({ onRetake }) => {
       )}
 
       {loading ? (
-        <div className="empty-state">Loading history�</div>
+        <WavyLoader size="md" text="Loading practice history..." subtext="Fetching past test sessions" />
       ) : filtered.length === 0 ? (
         <div className="empty-state">
           <History size={24} />

@@ -5,6 +5,7 @@ import { SlidingTabs } from './SlidingTabs';
 import type { Test, TestType } from '../types';
 import { validateTestSchema } from '../utils/schemaValidator';
 import { saveTest } from '../utils/api';
+import { WavyLoader } from './WavyLoader';
 
 export const ImportModule: React.FC = () => {
   const [mode,       setMode]       = useState<'FILE' | 'PASTE'>('FILE');
@@ -258,9 +259,18 @@ export const ImportModule: React.FC = () => {
                 <span className="badge badge-slate">{preview.sections.length} sections</span>
                 <span className="badge badge-slate">{preview.sections.reduce((a, s) => a + s.questions.length, 0)} questions</span>
               </div>
-              <button className="btn btn-primary" style={{ width: '100%' }} onClick={handleSave} disabled={saving}>
-                <Database size={14} />
-                {saving ? 'Saving…' : 'Save to Library'}
+              <button className="btn btn-primary" style={{ width: '100%', gap: 8, justifyContent: 'center' }} onClick={handleSave} disabled={saving}>
+                {saving ? (
+                  <>
+                    <WavyLoader size={18} inline center={false} />
+                    <span>Saving to Library...</span>
+                  </>
+                ) : (
+                  <>
+                    <Database size={14} />
+                    <span>Save to Library</span>
+                  </>
+                )}
               </button>
             </div>
           ) : !saved && (

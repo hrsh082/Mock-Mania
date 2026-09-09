@@ -13,6 +13,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine
 } from 'recharts';
 import { fetchPerformanceStats, fetchSessionsHistory } from '../utils/api';
+import { WavyLoader } from './WavyLoader';
 
 export const DashboardModule: React.FC = () => {
   const [rawSessions, setRawSessions] = useState<any[]>([]);
@@ -75,12 +76,11 @@ export const DashboardModule: React.FC = () => {
   if (loading) {
     return (
       <div className="page fade-in">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 20 }}>
-          {[1,2,3].map(i => (
-            <div key={i} style={{ height: 80, borderRadius: 14, background: 'linear-gradient(90deg, #f1f5f9 25%, #e9edf5 50%, #f1f5f9 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
-          ))}
-        </div>
-        <style>{`@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
+        <WavyLoader
+          size="lg"
+          text="Loading your dashboard analytics..."
+          subtext="Fetching performance metrics and practice history"
+        />
       </div>
     );
   }
