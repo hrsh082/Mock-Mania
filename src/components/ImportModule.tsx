@@ -341,9 +341,11 @@ export const ImportModule: React.FC = () => {
   ]
 }
 
-SPECIAL INSTRUCTIONS FOR VISUAL QUESTIONS:
-1. For Data Interpretation (DI): Include the Bar/Line/Pie chart image URL or URL-encoded SVG in 'passageImageUrl' so all set questions share the chart.
-2. For Non-Verbal Reasoning: Use 'imageUrl' for question matrices/patterns and 'imageUrl' inside options for figure choices A, B, C, D.`);
+SPECIAL INSTRUCTIONS:
+1. MATH & FORMULAS: Do NOT output raw LaTeX code like \\frac{a}{b} or $...$. Use clean symbols: × for multiplication, ÷ for division, ² for square (e.g. x²), ³ for cube, √ for square root, ° for degrees, and standard fractions like (a/b) or 1/2.
+2. ENGLISH UNDERLINES: When a question refers to an "underlined word or phrase", wrap that exact phrase in <u>phrase</u> tags or _phrase_ tags (e.g., "Select the synonym of <u>speaking at length</u>").
+3. BOLD HIGHLIGHTS: Use **bold** for key numbers, equations, and rules (e.g. "**21 × 4 - 156 ÷ 13 + 11 = 83**").
+4. VISUAL QUESTIONS: For Data Interpretation (DI), attach chart SVG/URLs to 'passageImageUrl'. For Non-Verbal Reasoning, use 'imageUrl' on questions and option figures.`);
                   setCopiedPrompt(true);
                   setTimeout(() => setCopiedPrompt(false), 2500);
                 }}

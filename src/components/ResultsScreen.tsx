@@ -8,6 +8,7 @@ import type { Test, UserResponse, GrandResult } from '../types';
 import { calculateResults } from '../utils/scoring';
 import { submitSessionResult, fetchPerformanceStats } from '../utils/api';
 import { formatImgSrc } from '../utils/imageUtils';
+import { renderRichText } from '../utils/textRenderer';
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip
@@ -419,13 +420,13 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                           position: 'relative',
                         }}>
                           <span style={{ fontSize: 9, fontWeight: 600, color: 'var(--indigo-400)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 3 }}>Passage</span>
-                          {q.passage}
+                          {renderRichText(q.passage)}
                         </div>
                       )}
 
                       {/* Question text */}
                       <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--gray-900)', lineHeight: 1.65, marginBottom: q.imageUrl ? 10 : 14, letterSpacing: '-0.01em' }}>
-                        {q.questionText}
+                        {renderRichText(q.questionText)}
                       </div>
 
                       {/* Question visual figure / diagram */}
@@ -470,7 +471,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                                 fontSize: 10.5, fontWeight: 600, flexShrink: 0,
                               }}>{opt.label}</span>
                               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                {opt.text && <span>{opt.text}</span>}
+                                {opt.text && <span>{renderRichText(opt.text)}</span>}
                                 {opt.imageUrl && (
                                   <img src={formatImgSrc(opt.imageUrl)} alt={`Option ${opt.label}`} className="opt-visual-img" />
                                 )}
@@ -525,7 +526,7 @@ export const ResultsScreen: React.FC<Props> = ({ test, responses, onRetry, onUpl
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, fontWeight: 600, color: 'var(--indigo-700)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                             <Zap size={12} /> Explanation
                           </div>
-                          {q.explanation && <div>{q.explanation}</div>}
+                          {q.explanation && <div>{renderRichText(q.explanation)}</div>}
                           {q.explanationImageUrl && (
                             <div style={{ marginTop: 8 }}>
                               <img src={formatImgSrc(q.explanationImageUrl)} alt="Visual Solution" className="explanation-image" />

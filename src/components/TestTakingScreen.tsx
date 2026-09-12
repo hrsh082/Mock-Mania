@@ -3,21 +3,7 @@ import { Clock, ChevronRight, Bookmark, AlertCircle, Eye, EyeOff, LayoutGrid } f
 import type { Test, UserResponse, QuestionStatus } from '../types';
 import confetti from 'canvas-confetti';
 import { formatImgSrc } from '../utils/imageUtils';
-
-
-/** Renders **bold** and _italic_ markdown inline safely as React elements */
-function renderRichText(text: string): React.ReactNode {
-  if (!text) return text;
-  // Split on **bold** and _italic_ markers
-  const parts = text.split(/(\*\*[^*]+\*\*|_[^_]+_)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**'))
-      return <strong key={i} style={{ fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
-    if (part.startsWith('_') && part.endsWith('_'))
-      return <em key={i}>{part.slice(1, -1)}</em>;
-    return part;
-  });
-}
+import { renderRichText } from '../utils/textRenderer';
 interface Props {
   test: Test;
   onSubmit: (responses: UserResponse[]) => void;
